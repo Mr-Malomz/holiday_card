@@ -1,82 +1,167 @@
-import Head from 'next/head'
+import Head from 'next/head';
+import Link from 'next/link';
+import { useState } from 'react';
+import { CloudinaryContext, Transformation, Image } from 'cloudinary-react';
+import { Card } from '../components/Card';
+import halloween from '../utils/halloween.json';
+import diwali from '../utils/diwali.json';
 
 export default function Home() {
+  const [tab, setTab] = useState('halloween');
+  const [imageId, setImageId] = useState(null);
+  const [formData, setFormData] = useState({
+    message: '',
+    name: '',
+    publicId: null,
+    error: false,
+  });
+  const [showCard, setShowCard] = useState(false);
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (imageId) {
+      setShowCard(true);
+    } else {
+      setFormData({ ...formData, error: true });
+    }
+  };
+
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen py-2">
+    <div className='p-10'>
       <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
+        <title>Holiday Card</title>
+        <link rel='icon' href='/favicon.ico' />
       </Head>
 
-      <main className="flex flex-col items-center justify-center w-full flex-1 px-20 text-center">
-        <h1 className="text-6xl font-bold">
-          Welcome to{' '}
-          <a className="text-blue-600" href="https://nextjs.org">
-            Next.js!
-          </a>
-        </h1>
+      <main className=''>
+        <h1 className='text-3xl'>Holiday Card Generator</h1>
+        <header className='flex border-b-2 mt-7 mb-7'>
+          <Link href='#'>
+            <a
+              className={`text-base capitalize mr-8 pb-4 ${
+                tab === 'halloween'
+                  ? 'font-bold border-b-4 border-[#1D4ED8] text-[#1D4ED8]'
+                  : 'text-[#5A5A7D]'
+              } `}
+              onClick={() => setTab('halloween')}
+            >
+              halloween
+            </a>
+          </Link>
+          <Link href='#'>
+            <a
+              className={`text-base capitalize mr-8 pb-4 ${
+                tab === 'diwali'
+                  ? 'font-bold border-b-4 border-[#1D4ED8] text-[#1D4ED8]'
+                  : 'text-[#5A5A7D]'
+              } `}
+              onClick={() => setTab('diwali')}
+            >
+              diwali
+            </a>
+          </Link>
+        </header>
+        <form onSubmit={handleSubmit} className='lg:w-2/5'> 
+          <CloudinaryContext cloudName='dtgbzmpca'>
+            <section className='mb-6'>
+              <label className='block text-sm text-[#535353] mb-2'>
+                Select an image
+              </label>
+              {tab === 'halloween' ? (
+                <div className='flex items-center'>
+                  {halloween.map((img) => (
+                    <div
+                      key={img.id}
+                      className={`mr-2 ${
+                        img.id === imageId ? 'border-[#1D4ED8] border-4' : ''
+                      }`}
+                      onClick={() => {
+                        setImageId(img.id);
+                        setFormData({
+                          ...formData,
+                          publicId: img.publicId,
+                          error: false,
+                        });
+                        setShowCard(false);
+                      }}
+                    >
+                      <Image publicId={img.publicId}>
+                        <Transformation crop='scale' width='80' height='80' />
+                      </Image>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className='flex items-center'>
+                  {diwali.map((img) => (
+                    <div
+                      key={img.id}
+                      className={`mr-2 ${
+                        img.id === imageId ? 'border-[#1D4ED8] border-4' : ''
+                      }`}
+                      onClick={() => {
+                        setImageId(img.id);
+                        setFormData({
+                          ...formData,
+                          publicId: img.publicId,
+                          error: false,
+                        });
+                        setShowCard(false);
+                      }}
+                    >
+                      <Image publicId={img.publicId}>
+                        <Transformation crop='scale' width='80' height='80' />
+                      </Image>
+                    </div>
+                  ))}
+                </div>
+              )}
+              {formData.error && (
+                <p className='text-sm text-red-500'>Please select an image</p>
+              )}
+            </section>
+          </CloudinaryContext>
+          <div className='mb-6'>
+            <label className='block text-sm text-[#535353] mb-2'>Message</label>
+            <textarea
+              rows='4'
+              required
+              name='message'
+              value={formData.message}
+              onChange={handleChange}
+              maxLength={20}
+              className='w-full border-[#B7B3B3] border rounded-sm p-2'
+            />
+          </div>
+          <div className='mb-6'>
+            <label className='block text-sm text-[#535353] mb-2'>Name</label>
+            <input
+              required
+              name='name'
+              value={formData.name}
+              onChange={handleChange}
+              className='w-full h-10 border-[#B7B3B3] border rounded-sm p-2'
+            />
+          </div>
+          <button className='bg-[#1D4ED8] py-3 px-7 rounded-[5px] text-white font-semibold'>
+            Generate Card
+          </button>
+        </form>
 
-        <p className="mt-3 text-2xl">
-          Get started by editing{' '}
-          <code className="p-3 font-mono text-lg bg-gray-100 rounded-md">
-            pages/index.js
-          </code>
-        </p>
-
-        <div className="flex flex-wrap items-center justify-around max-w-4xl mt-6 sm:w-full">
-          <a
-            href="https://nextjs.org/docs"
-            className="p-6 mt-6 text-left border w-96 rounded-xl hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Documentation &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Find in-depth information about Next.js features and API.
-            </p>
-          </a>
-
-          <a
-            href="https://nextjs.org/learn"
-            className="p-6 mt-6 text-left border w-96 rounded-xl hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Learn &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Learn about Next.js in an interactive course with quizzes!
-            </p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className="p-6 mt-6 text-left border w-96 rounded-xl hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Examples &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Discover and deploy boilerplate example Next.js projects.
-            </p>
-          </a>
-
-          <a
-            href="https://vercel.com/import?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className="p-6 mt-6 text-left border w-96 rounded-xl hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Deploy &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
+        {showCard && (
+          <div className='mt-10'>
+            <Card
+              message={formData.message}
+              name={formData.name}
+              publicId={formData.publicId}
+            />
+          </div>
+        )}
       </main>
-
-      <footer className="flex items-center justify-center w-full h-24 border-t">
-        <a
-          className="flex items-center justify-center"
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel Logo" className="h-4 ml-2" />
-        </a>
-      </footer>
     </div>
-  )
+  );
 }
