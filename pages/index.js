@@ -3,11 +3,12 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { CloudinaryContext, Transformation, Image } from 'cloudinary-react';
 import { Card } from '../components/Card';
-import halloween from '../utils/halloween.json';
+import harvest from '../utils/harvest.json';
+import thanksgiving from '../utils/thanksgiving.json';
 import diwali from '../utils/diwali.json';
 
 export default function Home() {
-  const [tab, setTab] = useState('halloween');
+  const [tab, setTab] = useState('harvest');
   const [imageId, setImageId] = useState(null);
   const [formData, setFormData] = useState({
     message: '',
@@ -43,13 +44,25 @@ export default function Home() {
           <Link href='#'>
             <a
               className={`text-base capitalize mr-8 pb-4 ${
-                tab === 'halloween'
+                tab === 'harvest'
                   ? 'font-bold border-b-4 border-[#1D4ED8] text-[#1D4ED8]'
                   : 'text-[#5A5A7D]'
               } `}
-              onClick={() => setTab('halloween')}
+              onClick={() => setTab('harvest')}
             >
-              halloween
+              harvest month
+            </a>
+          </Link>
+          <Link href='#'>
+            <a
+              className={`text-base capitalize mr-8 pb-4 ${
+                tab === 'thanksgiving'
+                  ? 'font-bold border-b-4 border-[#1D4ED8] text-[#1D4ED8]'
+                  : 'text-[#5A5A7D]'
+              } `}
+              onClick={() => setTab('thanksgiving')}
+            >
+              thanksgiving
             </a>
           </Link>
           <Link href='#'>
@@ -65,15 +78,39 @@ export default function Home() {
             </a>
           </Link>
         </header>
-        <form onSubmit={handleSubmit} className='lg:w-2/5'> 
+        <form onSubmit={handleSubmit} className='lg:w-2/5'>
           <CloudinaryContext cloudName='dtgbzmpca'>
             <section className='mb-6'>
               <label className='block text-sm text-[#535353] mb-2'>
                 Select an image
               </label>
-              {tab === 'halloween' ? (
+              {tab === 'harvest' ? (
                 <div className='flex items-center'>
-                  {halloween.map((img) => (
+                  {harvest.map((img) => (
+                    <div
+                      key={img.id}
+                      className={`mr-2 ${
+                        img.id === imageId ? 'border-[#1D4ED8] border-4' : ''
+                      }`}
+                      onClick={() => {
+                        setImageId(img.id);
+                        setFormData({
+                          ...formData,
+                          publicId: img.publicId,
+                          error: false,
+                        });
+                        setShowCard(false);
+                      }}
+                    >
+                      <Image publicId={img.publicId}>
+                        <Transformation crop='scale' width='80' height='80' />
+                      </Image>
+                    </div>
+                  ))}
+                </div>
+              ) : tab === 'thanksgiving' ? (
+                <div className='flex items-center'>
+                  {thanksgiving.map((img) => (
                     <div
                       key={img.id}
                       className={`mr-2 ${
